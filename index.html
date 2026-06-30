@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的导航</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f0f2f5;
+  --card: #fff;
+  --text: #1f2937;
+  --text2: #6b7280;
+  --border: #e5e7eb;
+  --blue: #3b82f6;
+  --red: #ef4444;
+  --green: #10b981;
+  --orange: #f59e0b;
+  --shadow: 0 1px 3px rgba(0,0,0,.08);
+  --radius: 10px;
+  --gap: 16px;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.6;
+  min-height: 100vh;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 顶部栏 */
+.header {
+  background: var(--card); border-bottom: 1px solid var(--border);
+  padding: 12px var(--gap); position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow);
+}
+.header-inner {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.header h1 { font-size: 20px; font-weight: 700; white-space: nowrap; }
+.header-actions { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
+.search-box {
+  flex: 1; min-width: 160px; max-width: 320px;
+  padding: 7px 12px; border: 1px solid var(--border); border-radius: 6px;
+  font-size: 14px; outline: none;
+}
+.search-box:focus { border-color: var(--blue); }
+.btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--card); font-size: 13px; cursor: pointer; white-space: nowrap;
+  transition: background .15s;
+}
+.btn:hover { background: #f3f4f6; }
+.btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+.btn-primary:hover { background: #2563eb; }
+.btn-danger { color: var(--red); }
+.btn-danger:hover { background: #fef2f2; }
+.btn-sm { padding: 3px 8px; font-size: 12px; }
+.btn-login { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-login:hover { background: #059669; }
+.btn-logout { color: var(--text2); }
+
+/* 主体 */
+.main { max-width: 1280px; margin: 0 auto; padding: var(--gap); }
+
+/* 分类卡片网格 */
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--gap); margin-bottom: var(--gap); }
+.cat-card {
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+  overflow: hidden; border-left: 4px solid var(--blue);
+}
+.cat-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.cat-head h2 { font-size: 15px; font-weight: 600; }
+.cat-head-actions { display: flex; gap: 4px; align-items: center; }
+.cat-body { padding: 8px 14px 10px; min-height: 40px; }
+.bm-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 5px 0; border-bottom: 1px solid #f3f4f6;
+}
+.bm-item:last-child { border-bottom: none; }
+.bm-link {
+  flex: 1; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.bm-link a { display: flex; align-items: center; gap: 5px; }
+.bm-link .icon { font-size: 14px; flex-shrink: 0; }
+.bm-actions { display: flex; gap: 2px; flex-shrink: 0; margin-left: 8px; }
+.empty-tip { color: var(--text2); font-size: 13px; text-align: center; padding: 12px 0; }
+.add-cat-btn { width: 100%; padding: 20px; border: 2px dashed var(--border); border-radius: var(--radius); background: transparent; cursor: pointer; font-size: 14px; color: var(--text2); transition: all .15s; }
+.add-cat-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(59,130,246,.04); }
+
+/* 密码本 */
+.cred-section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.cred-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+}
+.cred-head h2 { font-size: 16px; font-weight: 600; }
+.cred-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cred-table th { text-align: left; padding: 8px 12px; font-weight: 500; color: var(--text2); border-bottom: 1px solid var(--border); font-size: 12px; }
+.cred-table td { padding: 8px 12px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+.cred-table tr:last-child td { border-bottom: none; }
+.cred-table .site-link { display: flex; align-items: center; gap: 4px; }
+.pwd-display { font-family: monospace; letter-spacing: 1px; }
+.eye-btn { background: none; border: none; cursor: pointer; font-size: 16px; padding: 2px 4px; opacity: .5; }
+.eye-btn.active { opacity: 1; cursor: pointer; }
+.eye-btn.disabled { opacity: .3; cursor: not-allowed; }
+.cred-actions { display: flex; gap: 4px; }
+
+/* 模态框 */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4);
+  z-index: 1000; align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: var(--card); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  width: 90%; max-width: 440px; max-height: 90vh; overflow-y: auto; padding: 24px;
+}
+.modal-box h2 { font-size: 18px; margin-bottom: 16px; }
+.modal-box label { display: block; font-size: 13px; color: var(--text2); margin: 10px 0 4px; }
+.modal-box input, .modal-box textarea {
+  width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;
+  font-size: 14px; outline: none;
+}
+.modal-box input:focus, .modal-box textarea:focus { border-color: var(--blue); }
+.modal-box textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+.modal-box .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+.modal-box .error { color: var(--red); font-size: 13px; margin-top: 8px; display: none; }
+.modal-box .error.show { display: block; }
+
+/* 提示消息 */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+  background: #1f2937; color: #fff; padding: 10px 20px; border-radius: 8px;
+  font-size: 14px; z-index: 2000; opacity: 0; transition: opacity .3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .header h1 { width: 100%; }
+  .header-actions { width: 100%; }
+  .search-box { max-width: none; }
+  .cat-grid { grid-template-columns: 1fr; }
+  .cred-table { font-size: 12px; }
+  .cred-table th, .cred-table td { padding: 6px 8px; }
+  .modal-box { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- 顶部栏 -->
+<header class="header">
+  <div class="header-inner">
+    <h1>🔖 我的导航</h1>
+    <div class="header-actions">
+      <input class="search-box" id="searchInput" type="text" placeholder="搜索书签..." oninput="onSearch()">
+      <button class="btn btn-sm" onclick="exportData()" id="exportBtn" style="display:none">📥 导出</button>
+      <button class="btn btn-sm" onclick="document.getElementById('importFile').click()" id="importBtn" style="display:none">📤 导入</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+      <span id="loginStatus">
+        <button class="btn btn-sm btn-login" onclick="showLoginModal()">🔑 登录</button>
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- 主体 -->
+<main class="main">
+  <!-- 分类网格 -->
+  <div class="cat-grid" id="catGrid"></div>
+  <button class="add-cat-btn" id="addCatBtn" style="display:none" onclick="showAddCategoryModal()">+ 添加分类</button>
+
+  <!-- 密码本 -->
+  <div class="cred-section" id="credSection">
+    <div class="cred-head">
+      <h2>🔑 密码本</h2>
+      <button class="btn btn-sm btn-primary" id="addCredBtn" style="display:none" onclick="showAddCredentialModal()">+ 新增</button>
+    </div>
+    <div class="cred-body" id="credBody"></div>
+  </div>
+</main>
+
+<!-- 登录弹窗 -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <h2>🔑 输入管理密码</h2>
+    <label>管理密码</label>
+    <input type="password" id="loginPwd" placeholder="输入密码" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="error" id="loginError"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('loginModal')">取消</button>
+      <button class="btn btn-primary" onclick="doLogin()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- 修改密码弹窗 -->
+<div class="modal-overlay" id="pwdModal">
+  <div class="modal-box">
+    <h2>🔑 修改管理密码</h2>
+    <label>当前密码</label>
+    <input type="password" id="pwdOld" placeholder="输入当前密码" onkeydown="if(event.key==='Enter')doChangePwd()">
+    <label>新密码</label>
+    <input type="password" id="pwdNew" placeholder="输入新密码（至少4位）" onkeydown="if(event.key==='Enter')doChangePwd()">
+    <label>确认新密码</label>
+    <input type="password" id="pwdConfirm" placeholder="再次输入新密码" onkeydown="if(event.key==='Enter')doChangePwd()">
+    <div class="error" id="pwdError"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('pwdModal')">取消</button>
+      <button class="btn btn-primary" onclick="doChangePwd()">确认修改</button>
+    </div>
+  </div>
+</div>
+
+<!-- 分类弹窗 -->
+
+<!-- 分类弹窗 -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal-box">
+    <h2 id="catModalTitle">添加分类</h2>
+    <label>分类名称</label>
+    <input type="text" id="catName" placeholder="输入分类名称" onkeydown="if(event.key==='Enter')submitCategory()">
+    <div class="error" id="catError"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('catModal')">取消</button>
+      <button class="btn btn-primary" onclick="submitCategory()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- 书签弹窗 -->
+<div class="modal-overlay" id="bmModal">
+  <div class="modal-box">
+    <h2 id="bmModalTitle">添加书签</h2>
+    <label>名称</label>
+    <input type="text" id="bmName" placeholder="例如：ChatGPT" onkeydown="if(event.key==='Enter'&&event.ctrlKey)submitBookmark()">
+    <label>链接 URL</label>
+    <input type="text" id="bmUrl" placeholder="例如：https://chat.openai.com" onkeydown="if(event.key==='Enter'&&event.ctrlKey)submitBookmark()">
+    <div class="error" id="bmError"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('bmModal')">取消</button>
+      <button class="btn btn-primary" onclick="submitBookmark()">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- 密码弹窗 -->
+<div class="modal-overlay" id="credModal">
+  <div class="modal-box">
+    <h2 id="credModalTitle">添加密码</h2>
+    <label>网站名称</label>
+    <input type="text" id="credSite" placeholder="例如：Bilibili" onkeydown="if(event.key==='Enter'&&event.ctrlKey)submitCredential()">
+    <label>网站链接</label>
+    <input type="text" id="credUrl" placeholder="例如：https://www.bilibili.com" onkeydown="if(event.key==='Enter'&&event.ctrlKey)submitCredential()">
+    <label>用户名</label>
+    <input type="text" id="credUser" placeholder="邮箱 / 手机号" onkeydown="if(event.key==='Enter'&&event.ctrlKey)submitCredential()">
+    <label>密码</label>
+    <input type="text" id="credPwd" placeholder="输入密码" onkeydown="if(event.key==='Enter'&&event.ctrlKey)submitCredential()">
+    <label>备注</label>
+    <textarea id="credNotes" placeholder="可选备注信息"></textarea>
+    <div class="error" id="credError"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('credModal')">取消</button>
+      <button class="btn btn-primary" onclick="submitCredential()">确认</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 状态 ====================
+let loggedIn = false;
+let categories = [];
+let credentials = [];
+let searchQuery = '';
+
+// 编辑暂存
+let editingCatId = null;
+let editingBmData = null;
+let editingCredId = null;
+
+const CAT_COLORS = ['#3b82f6','#8b5cf6','#f59e0b','#ef4444','#10b981','#14b8a6','#f97316','#ec4899','#6366f1','#84cc16'];
+
+// ==================== 工具 ====================
+function $(id) { return document.getElementById(id); }
+function showToast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function showModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function closeAllModals() { document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show')); }
+function escModal(e) { if(e.key==='Escape') closeAllModals(); }
+document.addEventListener('keydown', escModal);
+document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('show'); }));
+
+function colorForCat(idx) { return CAT_COLORS[idx % CAT_COLORS.length]; }
+
+// ==================== API ====================
+async function api(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  if (res.status === 401) {
+    loggedIn = false;
+    renderAll();
+    showToast('登录已过期，请重新登录');
+    showLoginModal();
+    return null;
+  }
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    showToast(err.error || '请求失败');
+    return null;
+  }
+  return res.json();
+}
+
+async function doLogin() {
+  const pwd = $('loginPwd').value;
+  const res = await api('POST', '/api/login', { password: pwd });
+  if (res && res.ok) {
+    loggedIn = true;
+    closeModal('loginModal');
+    $('loginPwd').value = '';
+    $('loginError').classList.remove('show');
+    await loadAll();
+    showToast('登录成功');
+  } else {
+    $('loginError').textContent = '密码错误，请重试';
+    $('loginError').classList.add('show');
+  }
+}
+
+async function doLogout() {
+  await api('POST', '/api/logout');
+  loggedIn = false;
+  await loadAll();
+  showToast('已退出');
+}
+
+function showLoginModal() {
+  $('loginError').classList.remove('show');
+  $('loginPwd').value = '';
+  showModal('loginModal');
+  setTimeout(() => $('loginPwd').focus(), 100);
+}
+
+// ==================== 数据加载 ====================
+async function loadAll() {
+  const [cats, creds] = await Promise.all([api('GET', '/api/categories'), api('GET', '/api/credentials')]);
+  if (cats) categories = cats;
+  if (creds) credentials = creds;
+  renderAll();
+}
+
+// ==================== 搜索 ====================
+function onSearch() {
+  searchQuery = $('searchInput').value.trim().toLowerCase();
+  renderCategories();
+}
+
+// ==================== 渲染 ====================
+function renderAll() {
+  renderHeader();
+  renderCategories();
+  renderCredentials();
+}
+
+function renderHeader() {
+  const status = $('loginStatus');
+   if (loggedIn) {
+   status.innerHTML = `<span style="font-size:13px;color:var(--text2)">已登录</span> <button class="btn btn-sm" onclick="showChangePwdModal()">🔑 修改密码</button> <button class="btn btn-sm btn-logout" onclick="doLogout()">退出</button>`;
+    $('exportBtn').style.display = '';
+    $('importBtn').style.display = '';
+    $('addCatBtn').style.display = '';
+    $('addCredBtn').style.display = '';
+  } else {
+    status.innerHTML = `<button class="btn btn-sm btn-login" onclick="showLoginModal()">🔑 登录</button>`;
+    $('exportBtn').style.display = 'none';
+    $('importBtn').style.display = 'none';
+    $('addCatBtn').style.display = 'none';
+    $('addCredBtn').style.display = 'none';
+  }
+}
+
+function renderCategories() {
+  const grid = $('catGrid');
+  const empty = categories.length === 0;
+  if (empty) {
+    grid.innerHTML = `<div class="empty-tip" style="grid-column:1/-1">暂无分类，${loggedIn ? '点击下方按钮添加' : '请登录后添加'} 📂</div>`;
+    return;
+  }
+  grid.innerHTML = '';
+  categories.forEach((cat, idx) => {
+    const color = colorForCat(idx);
+    const bms = cat.bookmarks || [];
+    const filtered = searchQuery
+      ? bms.filter(b => b.name.toLowerCase().includes(searchQuery) || b.url.toLowerCase().includes(searchQuery))
+      : bms;
+
+    const card = document.createElement('div');
+    card.className = 'cat-card';
+    card.style.borderLeftColor = color;
+
+    const headActions = loggedIn
+      ? `<div class="cat-head-actions">
+          <button class="btn btn-sm" onclick="showRenameCategoryModal(${cat.id},'${cat.name.replace(/'/g,"\\'")}')" title="重命名">✎</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteCategory(${cat.id})" title="删除分类">🗑</button>
+          <button class="btn btn-sm btn-primary" onclick="showAddBookmarkModal(${cat.id})">+</button>
+        </div>`
+      : `<button class="btn btn-sm" onclick="showLoginModal()" title="登录后添加">+ 🔒</button>`;
+
+    card.innerHTML = `
+      <div class="cat-head">
+        <h2>${cat.name}</h2>
+        ${headActions}
+      </div>
+      <div class="cat-body"></div>
+    `;
+
+    const body = card.querySelector('.cat-body');
+    if (filtered.length === 0) {
+      body.innerHTML = `<div class="empty-tip">${searchQuery ? '无匹配结果' : '暂无书签'}</div>`;
+    } else {
+      filtered.forEach(bm => {
+        const item = document.createElement('div');
+        item.className = 'bm-item';
+
+        let url = bm.url;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+
+        let actionsHtml;
+        if (loggedIn) {
+          actionsHtml = `<div class="bm-actions">
+            <button class="btn btn-sm" onclick="showEditBookmarkModal(${bm.id},${cat.id},'${bm.name.replace(/'/g,"\\'")}','${(bm.url||'').replace(/'/g,"\\'")}')" title="编辑">✎</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteBookmark(${bm.id})" title="删除">🗑</button>
+          </div>`;
+        } else {
+          actionsHtml = '';
+        }
+
+        item.innerHTML = `
+          <div class="bm-link"><a href="${url}" target="_blank" rel="noopener"><span class="icon">🔗</span>${bm.name}</a></div>
+          ${actionsHtml}
+        `;
+        body.appendChild(item);
+      });
+    }
+    grid.appendChild(card);
+  });
+}
+
+function renderCredentials() {
+  const body = $('credBody');
+  if (credentials.length === 0) {
+    body.innerHTML = `<div class="empty-tip" style="padding:20px">暂无密码记录，${loggedIn ? '点击上方按钮添加' : '请登录后添加'} 🔒</div>`;
+    return;
+  }
+  let table = `<table class="cred-table"><thead><tr>
+    <th>网站</th><th>用户名</th><th>密码</th><th>备注</th>${loggedIn ? '<th style="width:60px">操作</th>' : ''}
+  </tr></thead><tbody>`;
+
+  credentials.forEach(c => {
+    let url = c.site_url;
+    if (url && !url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+
+    const siteDisplay = url
+      ? `<a href="${url}" target="_blank" rel="noopener" class="site-link">🔗 ${c.site_name}</a>`
+      : `<span class="site-link">🌐 ${c.site_name}</span>`;
+
+    table += `<tr>
+      <td>${siteDisplay}</td>
+      <td>${c.username || '-'}</td>
+      <td>
+        <span class="pwd-display" id="pwd-${c.id}">${c.password || ''}</span>
+        ${loggedIn && c.password ? `<button class="eye-btn active" id="eye-${c.id}" onclick="togglePwd(${c.id})" title="显示/隐藏密码">👁</button>` : ''}
+      </td>
+      <td style="color:var(--text2);font-size:13px">${c.notes || '-'}</td>
+      ${loggedIn ? `<td class="cred-actions">
+        <button class="btn btn-sm" onclick="showEditCredentialModal(${c.id},'${c.site_name.replace(/'/g,"\\'")}','${(c.site_url||'').replace(/'/g,"\\'")}','${(c.username||'').replace(/'/g,"\\'")}','${(c.password||'').replace(/'/g,"\\'")}','${(c.notes||'').replace(/'/g,"\\'")}')" title="编辑">✎</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteCredential(${c.id})" title="删除">🗑</button>
+      </td>` : ''}
+    </tr>`;
+  });
+
+  table += '</tbody></table>';
+  body.innerHTML = table;
+}
+
+// ==================== 密码显示切换 ====================
+let pwdVisible = {};
+function togglePwd(id) {
+  const span = document.getElementById(`pwd-${id}`);
+  const btn = document.getElementById(`eye-${id}`);
+  if (!loggedIn) { showToast('请先登录'); return; }
+  if (!pwdVisible[id]) {
+    // 从原始数据找到密码
+    const cred = credentials.find(c => c.id === id);
+    if (cred) span.textContent = cred.password;
+    pwdVisible[id] = true;
+    btn.textContent = '🙈';
+  } else {
+    const cred = credentials.find(c => c.id === id);
+    if (cred) span.textContent = '\u25cf'.repeat(cred.password.length || 6);
+    pwdVisible[id] = false;
+    btn.textContent = '👁';
+  }
+}
+
+// ==================== 分类 CRUD ====================
+function showAddCategoryModal() {
+  editingCatId = null;
+  $('catModalTitle').textContent = '添加分类';
+  $('catName').value = '';
+  $('catError').classList.remove('show');
+  showModal('catModal');
+  setTimeout(() => $('catName').focus(), 100);
+}
+
+function showRenameCategoryModal(id, name) {
+  editingCatId = id;
+  $('catModalTitle').textContent = '重命名分类';
+  $('catName').value = name;
+  $('catError').classList.remove('show');
+  showModal('catModal');
+  setTimeout(() => $('catName').focus(), 100);
+}
+
+async function submitCategory() {
+  const name = $('catName').value.trim();
+  if (!name) { $('catError').textContent = '名称不能为空'; $('catError').classList.add('show'); return; }
+  $('catError').classList.remove('show');
+  let res;
+  if (editingCatId) {
+    res = await api('PUT', `/api/categories/${editingCatId}`, { name });
+  } else {
+    res = await api('POST', '/api/categories', { name });
+  }
+  if (res) {
+    closeModal('catModal');
+    await loadAll();
+  }
+}
+
+async function deleteCategory(id) {
+  if (!confirm('确定删除这个分类吗？其下所有书签也会被删除。')) return;
+  const res = await api('DELETE', `/api/categories/${id}`);
+  if (res) await loadAll();
+}
+
+// ==================== 书签 CRUD ====================
+let bmCategoryId = null;
+function showAddBookmarkModal(catId) {
+  bmCategoryId = catId;
+  editingBmData = null;
+  $('bmModalTitle').textContent = '添加书签';
+  $('bmName').value = '';
+  $('bmUrl').value = '';
+  $('bmError').classList.remove('show');
+  showModal('bmModal');
+  setTimeout(() => $('bmName').focus(), 100);
+}
+
+function showEditBookmarkModal(id, catId, name, url) {
+  bmCategoryId = catId;
+  editingBmData = { id };
+  $('bmModalTitle').textContent = '编辑书签';
+  $('bmName').value = name;
+  $('bmUrl').value = url;
+  $('bmError').classList.remove('show');
+  showModal('bmModal');
+  setTimeout(() => $('bmName').focus(), 100);
+}
+
+async function submitBookmark() {
+  const name = $('bmName').value.trim();
+  const url = $('bmUrl').value.trim();
+  if (!name || !url) { $('bmError').textContent = '名称和链接不能为空'; $('bmError').classList.add('show'); return; }
+  $('bmError').classList.remove('show');
+  let res;
+  if (editingBmData) {
+    res = await api('PUT', `/api/bookmarks/${editingBmData.id}`, { name, url });
+  } else {
+    res = await api('POST', '/api/bookmarks', { category_id: bmCategoryId, name, url });
+  }
+  if (res) {
+    closeModal('bmModal');
+    await loadAll();
+  }
+}
+
+async function deleteBookmark(id) {
+  if (!confirm('确定删除这个书签吗？')) return;
+  const res = await api('DELETE', `/api/bookmarks/${id}`);
+  if (res) await loadAll();
+}
+
+// ==================== 密码 CRUD ====================
+function showAddCredentialModal() {
+  editingCredId = null;
+  $('credModalTitle').textContent = '添加密码';
+  $('credSite').value = '';
+  $('credUrl').value = '';
+  $('credUser').value = '';
+  $('credPwd').value = '';
+  $('credNotes').value = '';
+  $('credError').classList.remove('show');
+  showModal('credModal');
+  setTimeout(() => $('credSite').focus(), 100);
+}
+
+function showEditCredentialModal(id, site, url, user, pwd, notes) {
+  editingCredId = id;
+  $('credModalTitle').textContent = '编辑密码';
+  $('credSite').value = site;
+  $('credUrl').value = url;
+  $('credUser').value = user;
+  $('credPwd').value = pwd;
+  $('credNotes').value = notes;
+  $('credError').classList.remove('show');
+  showModal('credModal');
+  setTimeout(() => $('credSite').focus(), 100);
+}
+
+async function submitCredential() {
+  const site = $('credSite').value.trim();
+  const url = $('credUrl').value.trim();
+  const user = $('credUser').value.trim();
+  const pwd = $('credPwd').value;
+  const notes = $('credNotes').value.trim();
+  if (!site) { $('credError').textContent = '网站名称不能为空'; $('credError').classList.add('show'); return; }
+  $('credError').classList.remove('show');
+  let res;
+  if (editingCredId) {
+    res = await api('PUT', `/api/credentials/${editingCredId}`, { site_name: site, site_url: url, username: user, password: pwd, notes });
+  } else {
+    res = await api('POST', '/api/credentials', { site_name: site, site_url: url, username: user, password: pwd, notes });
+  }
+  if (res) {
+    closeModal('credModal');
+    await loadAll();
+  }
+}
+
+async function deleteCredential(id) {
+  if (!confirm('确定删除这条密码记录吗？')) return;
+  const res = await api('DELETE', `/api/credentials/${id}`);
+  if (res) await loadAll();
+}
+
+// ==================== 导入导出 ====================
+async function exportData() {
+  const data = await api('GET', '/api/export');
+  if (!data) return;
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `我的导航备份_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('导出成功');
+}
+
+async function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!data.categories || !data.bookmarks || !data.credentials) {
+      showToast('文件格式无效');
+      return;
+    }
+    if (!confirm('导入将覆盖当前所有数据，确认继续？')) return;
+    const res = await api('POST', '/api/import', data);
+    if (res) {
+      await loadAll();
+      showToast('导入成功');
+    }
+  } catch {
+    showToast('文件解析失败');
+  }
+  e.target.value = '';
+}
+
+// ==================== 初始化 ====================
+function showChangePwdModal() {
+  $('pwdOld').value = '';
+  $('pwdNew').value = '';
+  $('pwdConfirm').value = '';
+  $('pwdError').classList.remove('show');
+  showModal('pwdModal');
+  setTimeout(() => $('pwdOld').focus(), 100);
+}
+
+async function doChangePwd() {
+  const oldPwd = $('pwdOld').value;
+  const newPwd = $('pwdNew').value;
+  const confirmPwd = $('pwdConfirm').value;
+  if (!oldPwd || !newPwd || !confirmPwd) {
+    $('pwdError').textContent = '请填写完整';
+    $('pwdError').classList.add('show');
+    return;
+  }
+  if (newPwd !== confirmPwd) {
+    $('pwdError').textContent = '两次输入的新密码不一致';
+    $('pwdError').classList.add('show');
+    return;
+  }
+  if (newPwd.length < 4) {
+    $('pwdError').textContent = '新密码至少4位';
+    $('pwdError').classList.add('show');
+    return;
+  }
+  $('pwdError').classList.remove('show');
+  const res = await api('POST', '/api/change-password', { old_password: oldPwd, new_password: newPwd });
+  if (res && res.ok) {
+    closeModal('pwdModal');
+    loggedIn = false;
+    await loadAll();
+    showToast('密码已修改，请重新登录');
+  }
+}
+
+async function init() {
+  const check = await api('GET', '/api/check');
+  if (check) loggedIn = check.logged_in;
+  await loadAll();
+}
+init();
+</script>
+</body>
+</html>
