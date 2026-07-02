@@ -89,6 +89,11 @@ a:hover { text-decoration: underline; }
 .bm-link a { display: flex; align-items: center; gap: 5px; }
 .bm-link .icon { font-size: 14px; flex-shrink: 0; }
 .bm-actions { display: flex; gap: 2px; flex-shrink: 0; margin-left: 8px; }
+.bm-link-a { cursor: pointer; color: var(--blue); text-decoration: none; }
+.bm-link-a:hover { text-decoration: underline; }
+.cred-site-link { cursor: pointer; color: var(--blue); text-decoration: none; }
+.cred-site-link:hover { text-decoration: underline; }
+
 .empty-tip { color: var(--text2); font-size: 13px; text-align: center; padding: 12px 0; }
 .add-cat-btn { width: 100%; padding: 20px; border: 2px dashed var(--border); border-radius: var(--radius); background: transparent; cursor: pointer; font-size: 14px; color: var(--text2); transition: all .15s; }
 .add-cat-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(59,130,246,.04); }
@@ -450,7 +455,7 @@ function renderCategories() {
         }
 
         item.innerHTML = `
-          <div class="bm-link"><a href="${url}" target="_blank" rel="noopener"><span class="icon">🔗</span>${bm.name}</a></div>
+          <div class="bm-link"><a href="${url}" class="bm-link-a" onclick="window.open('${url}','_blank');return false"><span class="icon">🔗</span>${bm.name}</a></div>
           ${actionsHtml}
         `;
         body.appendChild(item);
@@ -475,7 +480,7 @@ function renderCredentials() {
     if (url && !url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
 
     const siteDisplay = url
-      ? `<a href="${url}" target="_blank" rel="noopener" class="site-link">🔗 ${c.site_name}</a>`
+      ? `<a href="${url}" class="cred-site-link" onclick="window.open('${url}','_blank');return false">🔗 ${c.site_name}</a>`
       : `<span class="site-link">🌐 ${c.site_name}</span>`;
 
     table += `<tr>
