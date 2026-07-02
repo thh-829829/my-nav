@@ -454,10 +454,19 @@ function renderCategories() {
           actionsHtml = '';
         }
 
-        item.innerHTML = `
-          <div class="bm-link"><a href="${url}" class="bm-link-a" onclick="window.open('${url}','_blank');return false"><span class="icon">🔗</span>${bm.name}</a></div>
-          ${actionsHtml}
-        `;
+        const linkSpan = document.createElement('span');
+        linkSpan.className = 'bm-link-a';
+        linkSpan.textContent = '🔗 ' + bm.name;
+        linkSpan.onclick = function() { window.open(url, '_blank'); };
+        const linkDiv = document.createElement('div');
+        linkDiv.className = 'bm-link';
+        linkDiv.appendChild(linkSpan);
+        item.appendChild(linkDiv);
+        if (actionsHtml) {
+          const actionsDiv = document.createElement('div');
+          actionsDiv.innerHTML = actionsHtml;
+          item.appendChild(actionsDiv.firstChild || actionsDiv);
+        }
         body.appendChild(item);
       });
     }
