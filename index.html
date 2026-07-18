@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>我的导航</title>
+<title>小童蛮帅</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -166,7 +166,7 @@ a:hover { text-decoration: underline; }
 <!-- 顶部栏 -->
 <header class="header">
   <div class="header-inner">
-    <h1>🔖 我的导航</h1>
+    <h1>🔖 小童蛮帅</h1>
     <div class="header-actions">
       <input class="search-box" id="searchInput" type="text" placeholder="搜索书签..." oninput="onSearch()">
       <button class="btn btn-sm" onclick="exportData()" id="exportBtn" style="display:none">📥 导出</button>
@@ -679,7 +679,7 @@ async function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `我的导航备份_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `小童蛮帅备份_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(a.href);
   showToast('导出成功');
