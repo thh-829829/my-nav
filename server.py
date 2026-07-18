@@ -34,8 +34,11 @@ def close_db(exception):
 
 
 def init_db():
-    db = get_db()
-    db.executescript('''
+    """初始化数据库和默认数据（不需要 Flask 上下文）"""
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
+    conn.executescript('''
         CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -60,17 +63,20 @@ def init_db():
             notes TEXT DEFAULT '',
             created_at TEXT DEFAULT (datetime('now','localtime'))
         );
+        CREATE TABLE IF NOT EXISTS config (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        );
     ''')
-    db.execute("CREATE TABLE IF NOT EXISTS config (key TEXT PRIMARY KEY, value TEXT)")
-    # 初次启动时写入默认密码到配置表
-    if not db.execute("SELECT value FROM config WHERE key='password'").fetchone():
-        db.execute("INSERT INTO config (key, value) VALUES ('password', ?)", (APP_PASSWORD,))
-    count = db.execute('SELECT COUNT(*) FROM categories').fetchone()[0]
+    if not conn.execute("SELECT value FROM config WHERE key='password'").fetchone():
+        conn.execute("INSERT INTO config (key, value) VALUES ('password', ?)", (APP_PASSWORD,))
+    count = conn.execute('SELECT COUNT(*) FROM categories').fetchone()[0]
     if count == 0:
         defaults = ['AI学习', 'AI工具', '工作', '追剧', '邮箱']
         for i, name in enumerate(defaults):
-            db.execute('INSERT INTO categories (name, sort_order) VALUES (?, ?)', (name, i))
-    db.commit()
+            conn.execute('INSERT INTO categories (name, sort_order) VALUES (?, ?)', (name, i))
+    conn.commit()
+    conn.close()
 
 
 def login_required(f):
@@ -312,9 +318,7 @@ def api_import():
 def index():
    return send_from_directory(BASE_DIR, 'index.html')
 
+init_db()
 
 if __name__ == '__main__':
-   with app.app_context():
-       init_db()
-   print('启动成功！访问 http://localhost:5000')
-   app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
